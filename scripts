@@ -1,0 +1,18 @@
+#!/usr/bin/env -S deno run --no-check --allow-run --allow-read
+
+import { command, runCommand, args } from 'https://raw.githubusercontent.com/sagea/deno-utilities/main/command-runners.ts';
+
+command(`create-html`) `
+  deno run --unstable --allow-all --no-check ./create-indexhtml.ts
+`
+command('add-dep') `
+  deno run --unstable --allow-all --no-check ./creator.ts ${args(Deno.args.slice(1))}
+`
+command('add') `
+  ./scripts add-dep ${args(Deno.args.slice(1))};
+  ./scripts create-html;
+`
+runCommand(Deno.args);
+
+
+
