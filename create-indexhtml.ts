@@ -17,7 +17,7 @@ const htmlEnd = `
 </html>
 `;
 const links = [];
-for await (const u of walk('./m', { includeDirs: false })) {
+for await (const u of walk('./docs', { includeDirs: false })) {
   console.log(u);
   links.push(`<a href="/${u.path}">${u.path}</a>`);
 }
