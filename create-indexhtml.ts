@@ -1,28 +1,17 @@
 import { walk } from "https://deno.land/std/fs/mod.ts";
 import { Shell } from './shell.ts';
 
-const htmlStart = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-`;
-const htmlEnd = `
-</body>
-</html>
-`;
+const LINK_REPLACE_LABEL = `/* INSERT_LINKS_HERE */`
+const htmlTemplate = await Deno.readTextFile('./template-index.html');
 const links = [];
-for await (const u of walk('./docs', { includeDirs: false })) {
-  console.log(u);
-  links.push(`<a href="/${u.path}">${u.path}</a>`);
+const walkIter = () => walk('./docs', { includeDirs: false, exts: ['.ts', '.js'] });
+for await (const u of walkIter()) {
+  const finalPath = u.path.replace(/^\/?docs/, '');
+  links.push(finalPath);
 }
+const linksJson = JSON.stringify(links);
+const finalHTML = htmlTemplate.replace(LINK_REPLACE_LABEL, linksJson);
 
-const finalHTML = htmlStart + links.join('\n') + htmlEnd;
 const s = new Shell();
 console.log('Writing index file');
 await s.cd('./docs');
